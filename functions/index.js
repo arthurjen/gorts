@@ -47,6 +47,7 @@ exports.moveQueue = functions.database.ref('/moves/{gameKey}/{uid}').onCreate((s
 
   return gameMovesRef.once('value')
     .then(snapshot => {
+      
       const game = snapshot.val();
       const moves = Object.keys(game)
         .map(key => ({
@@ -55,17 +56,41 @@ exports.moveQueue = functions.database.ref('/moves/{gameKey}/{uid}').onCreate((s
         }));
       if(moves.length < 2) return null;
 
-      const roundRef = gamesRef.child(gameKey).child('rounds').push();
+      const gameRef = gamesRef.child(gameKey);
+      
+      const winner = calculateWinner(moves);
+      const winnerRef = gameRef.child(winner);
 
+      const wins = 1 + winnerRef.child('wins').on('value', snapshot => snapshot.val());
+      
+
+
+
+
+      // const player1PointsRef = gameRef.child(moves[0].uid).child('points');
+
+
+      
+      
+      
+      
+      
+      
+      
+      const roundRef = gameRef.child('rounds').push();
       return Promise.all([
         gameMovesRef.remove(),
+        winnerRef.child('wins').set(wins),
         roundRef.set({
           moves,
-          winner: calculateWinner(moves)
+          winner
         })
       ]);
     });
 });
+
+
+
 
 const calculateWinner = ([a, b]) => {
 
