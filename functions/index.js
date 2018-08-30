@@ -21,7 +21,16 @@ exports.playerQueue = functions.database.ref('/players/{uid}').onCreate((snapsho
         const newGameRef = gamesRef.push();
 
         return Promise.all([
-          newGameRef.set({ player1: uid, player2: player }),
+          newGameRef.set({ 
+            [uid]: {
+              troops: 10,
+              wins: 0
+            }, 
+            [player]: {
+              troops: 10,
+              wins: 0
+            } 
+          }),
           playersRef.child(uid).remove(),
           playersRef.child(player).remove(),
           userGamesRef.child(uid).child(newGameRef.key).set(true),
@@ -38,6 +47,7 @@ exports.moveQueue = functions.database.ref('/moves/{gameKey}/{uid}').onCreate((s
 
   return gameMovesRef.once('value')
     .then(snapshot => {
+      
       const game = snapshot.val();
       const moves = Object.keys(game)
         .map(key => ({
@@ -46,17 +56,58 @@ exports.moveQueue = functions.database.ref('/moves/{gameKey}/{uid}').onCreate((s
         }));
       if(moves.length < 2) return null;
 
-      const roundRef = gamesRef.child(gameKey).child('rounds').push();
+      
+      const gameRef = gamesRef.child(gameKey);
 
       return Promise.all([
         gameMovesRef.remove(),
-        roundRef.set({
-          moves,
-          winner: calculateWinner(moves)
+        gameRef.update({
+          moves: moves
         })
       ]);
     });
 });
+
+
+
+exports.gameLogic = functions.database.ref('/games/{gameKey}/moves').onCreate((snapshot, context) => {
+  const { gameKey } = context.params;
+
+  const gameRef = gamesRef.child(gameKey);
+
+  return gameRef.once('value')
+    .then(snapshot => {
+      const game = snapshot.val();
+      
+      const winnerId = calculateWinner(game.moves);
+
+      game[winnerId].wins++;
+      delete game.moves;
+
+      return Promise.all([
+        gameRef.set(game)
+      ]);
+    });
+
+
+      
+
+        
+      
+
+
+
+
+      // const player1PointsRef = gameRef.child(moves[0].uid).child('points');
+
+
+      
+      
+      
+      
+      
+});
+
 
 const calculateWinner = ([a, b]) => {
 
