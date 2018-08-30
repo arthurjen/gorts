@@ -30,18 +30,26 @@ class Game extends Component {
     if(!game || !user) return null;
 
     const { uid } = user;
-    const who = player => player === uid ? 'YOU' : 'THEM';
+    const opponentId = Object.keys(game).filter(key => key !== uid);
+    // const who = player => player === uid ? 'YOU' : 'THEM';
 
-    const player1 = who(game.player1);
-    const player2 = who(game.player2);
+    const you = game[uid];
+    const opponent = game[opponentId];
 
     return (
       <section>
         <h2>Players</h2>
-        <p>{player1} VS. {player2}</p>
+        {/* <p>{you} VS. {opponent}</p> */}
 
-        <ul>
-          {game.rounds && Object.keys(game.rounds).map((key, i) => {
+        <div>
+          <h3>You</h3>
+          <p>Wins: {you.wins}</p>
+          <p>Troops: {you.troops}</p>
+
+          <h3>Opponent</h3>
+          <p>Wins: {opponent.wins}</p>
+          <p>Troops: {opponent.troops}</p>
+          {/* {game.rounds && Object.keys(game.rounds).map((key, i) => {
             const round = game.rounds[key];
             return (
               <li key={i}>
@@ -53,8 +61,8 @@ class Game extends Component {
                 </ul>
               </li>
             );
-          })}
-        </ul>
+          })} */}
+        </div>
 
         <p>
           {[0, 1, 2, 3, 4, 5, 6, 7].map(play => (
