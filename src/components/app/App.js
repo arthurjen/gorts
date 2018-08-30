@@ -29,7 +29,7 @@ class App extends Component {
           <main>
             <Switch>
               <Route exact path="/" component={Home}/>
-              <Route exact path="games/:gameKey" component={Game}/>
+              <Route exact path="/games/:gameKey" component={Game}/>
               <Redirect to="/"/>
             </Switch>
           </main>
