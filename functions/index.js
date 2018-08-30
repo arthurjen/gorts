@@ -59,14 +59,15 @@ exports.moveQueue = functions.database.ref('/moves/{gameKey}/{uid}').onCreate((s
 });
 
 const calculateWinner = ([a, b]) => {
+
   // Refund if tie;
-  if(a === b) return null;
+  if(a.play === b.play) return null;
 
   // Undercutter wins;
   const limit = 3;
-  if(b - a > limit) return a.uid;
-  if(a - b > limit) return b.uid;
+  if(b.play - a.play > limit) return a.uid;
+  if(a.play - b.play > limit) return b.uid;
 
   // High number wins;
-  return a > b ? a.uid : b.uid;
+  return a.play > b.play ? a.uid : b.uid;
 };
