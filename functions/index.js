@@ -80,10 +80,17 @@ exports.gameLogic = functions.database.ref('/games/{gameKey}/moves').onCreate((s
       const game = snapshot.val();
       
       const winnerId = calculateWinner(game.moves);
+      if(winnerId) {
+        game[winnerId].wins++;
 
-      game[winnerId].wins++;
+        const player1 = game.moves[0];
+        const player2 = game.moves[1];
+
+        game[player1.uid].troops -= player1.play;
+        game[player2.uid].troops -= player2.play;
+      }
+
       delete game.moves;
-
       return Promise.all([
         gameRef.set(game)
       ]);
