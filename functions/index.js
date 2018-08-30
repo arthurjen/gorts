@@ -46,10 +46,10 @@ exports.moveQueue = functions.database.ref('/moves/{gameKey}/{uid}').onCreate((s
         }));
       if(moves.length < 2) return null;
 
-      const roundRef = games.Ref.child(gameKey).child('rounds').push();
+      const roundRef = gamesRef.child(gameKey).child('rounds').push();
 
       return Promise.all([
-        gamesMovesRef.remove(),
+        gameMovesRef.remove(),
         roundRef.set({
           moves,
           winner: calculateWinner(moves)

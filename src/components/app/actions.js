@@ -1,4 +1,4 @@
-import {  ERROR, ERROR_CLEAR, USER_LOAD, GAMES_LOAD, getUser, games } from './reducers';
+import {  ERROR, ERROR_CLEAR, USER_LOAD, GAMES_LOAD, getUser } from './reducers';
 import { auth } from '../../services/firebase';
 import { playersRef, userGamesRef } from '../../services/firebaseRef';
 
