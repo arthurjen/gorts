@@ -65,7 +65,7 @@ class Game extends Component {
         </div>
 
         <p>
-          {[0, 1, 2, 3, 4, 5, 6, 7].map(play => (
+          {buildArray(you.troops).map(play => (
             <button
               key={play}
               onClick={() => move(play)}>{play}</button>
@@ -75,6 +75,14 @@ class Game extends Component {
     );
   }
 }
+
+const buildArray = number => {
+  let arr = [];
+  for(let i = 0; i <= number; i++) {
+    arr.push(i);
+  }
+  return arr;
+};
  
 export default connect(
   state => ({
