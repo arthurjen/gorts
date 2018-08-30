@@ -1,28 +1,27 @@
-import { LOAD_START, LOAD_END, ERROR } from '../components/app/reducers';
+import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
+import thunk from 'redux-thunk';
+import promiseMiddleware from './promise-middleware';
+import { error, loading, user, games } from '../components/app/reducers';
+import { game } from '../components/game/reducers';
 
-const isPromise = val => val && typeof val.then === 'functions';
+const rootReducer = combineReducers({
+  error,
+  loading,
+  user,
+  games,
+  game
+});
 
-export default ({ dispatch }) => next => action => {
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-  const { type, payload } = action;
-  if(!isPromise(payload)) return next(action);
+const store = createStore(
+  rootReducer,
+  composeEnhancers(
+    applyMiddleware(
+      thunk,
+      promiseMiddleware
+    )
+  )
+);
 
-  dispatch({ type: LOAD_START });
-
-  return payload
-    .then(
-      result => {
-        dispatch({ type: LOAD_END });
-
-        return dispatch({
-          type,
-          payload: result
-        });
-      },
-      err => {
-        dispatch({ type: LOAD_END });
-        dispatch({ type: ERROR, payload: err });
-        throw err;
-      }
-    );
-};
+export default store;
