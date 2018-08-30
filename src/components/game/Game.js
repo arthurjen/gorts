@@ -30,7 +30,7 @@ class Game extends Component {
     if(!game || !user) return null;
 
     const { uid } = user;
-    const opponentId = Object.keys(game).filter(key => key !== uid);
+    const opponentId = Object.keys(game).filter(key => key !== uid)[0];
     // const who = player => player === uid ? 'YOU' : 'THEM';
 
     const you = game[uid];
