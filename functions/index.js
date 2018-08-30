@@ -21,7 +21,16 @@ exports.playerQueue = functions.database.ref('/players/{uid}').onCreate((snapsho
         const newGameRef = gamesRef.push();
 
         return Promise.all([
-          newGameRef.set({ player1: uid, player2: player }),
+          newGameRef.set({ 
+            [uid]: {
+              troops: 10,
+              wins: 0
+            }, 
+            [player]: {
+              troops: 10,
+              wins: 0
+            } 
+          }),
           playersRef.child(uid).remove(),
           playersRef.child(player).remove(),
           userGamesRef.child(uid).child(newGameRef.key).set(true),
